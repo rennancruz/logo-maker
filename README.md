@@ -2,6 +2,10 @@
 
 A Node.js application that generates custom SVG logos based on user inputs. Users can specify the shape, colors, and text for the logo, which is then saved as a unique SVG file in the `generated-logos` folder.
 
+
+https://github.com/user-attachments/assets/1be795a5-46fd-4023-8ef8-1a1e6b8930ca
+
+
 ## Features
 
 - Supports three shapes: Circle, Triangle, and Square.
