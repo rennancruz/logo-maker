@@ -1,88 +1,51 @@
 const fs = require("fs");
-const inquirer = require("inquirer"); // inquirer @8.2.4
-const { Circle, Triangle, Square } = require("./lib/shapes");
+const inquirer = require("inquirer");
+const { CircleShape, TriangleShape, SquareShape } = require("./shapes");
 
-const shapeChoices = ["Circle", "Triangle", "Square"];
-
-async function userData() {
-  const answers = await inquirer.prompt([
+async function promptUser() {
+  return await inquirer.prompt([
     {
       type: "input",
-      name: "text",
-      message: "Enter up to three characters for the logo text:",
-      validate: (input) =>
-        input.length <= 3 ? true : "Text must be 3 characters long.",
+      name: "logoText",
+      message: "Enter up to three characters for the logo:",
+      validate: (input) => input.length <= 3 || "Limit is 3 characters.",
     },
-    {
-      type: "input",
-      name: "textColor",
-      message: "Enter a text color:",
-    },
+    { type: "input", name: "textColor", message: "Text color:" },
     {
       type: "list",
-      name: "shape",
-      message: "Choose a shape for the logo:",
-      choices: shapeChoices,
+      name: "shapeChoice",
+      message: "Choose a shape:",
+      choices: ["Circle", "Triangle", "Square"],
     },
-    {
-      type: "input",
-      name: "shapeColor",
-      message: "Enter a shape color:",
-    },
+    { type: "input", name: "shapeColor", message: "Shape color:" },
   ]);
-  return answers;
 }
 
-async function generateLogo() {
-  const { text, textColor, shape, shapeColor } = await userData();
-  let createShape;
+async function createLogo() {
+  const { logoText, textColor, shapeChoice, shapeColor } = await promptUser();
+  const shapes = {
+    Circle: CircleShape,
+    Triangle: TriangleShape,
+    Square: SquareShape,
+  };
+  const selectedShape = new shapes[shapeChoice]();
 
-  // Switch statement for different shape instances based on userData
-  switch (shape) {
-    case "Circle":
-      createShape = new Circle();
-      break;
-    case "Triangle":
-      createShape = new Triangle();
-      break;
-    case "Square":
-      createShape = new Square();
-      break;
-  }
-  // Sets color for created shape based off userData
-  createShape.setColor(shapeColor);
+  selectedShape.applyColor(shapeColor);
 
-  // Code block so text input is centered based on shape selection
-  let textY;
-  if (shape === "Circle") {
-    textY = 111;
-  } else if (shape === "Triangle") {
-    textY = 130;
-  } else if (shape === "Square") {
-    textY = 110;
-  }
-
-  let textX;
-  if (shape === "Circle") {
-    textX = 150;
-  } else if (shape === "Triangle") {
-    textX = 150;
-  } else if (shape === "Square") {
-    textX = 150;
-  }
-  // Dynamically creates SVG 
+  const textCoords = { y: shapeChoice === "Triangle" ? 130 : 110, x: 150 };
   const svgContent = `
-  <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
-      ${createShape.render()}
-      <text x="${textX}" y="${textY} " font-size="40" text-anchor="middle" fill="${textColor}">${text}</text>
-  </svg>
-`;
+    <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+        ${selectedShape.render()}
+        <text x="${textCoords.x}" y="${
+    textCoords.y
+  }" font-size="40" text-anchor="middle" fill="${textColor}">
+          ${logoText}
+        </text>
+    </svg>
+  `;
 
-  // Writes the svgContent to logo.svg files
   fs.writeFileSync("logo.svg", svgContent);
-  // Logs message per acceptance criteria
   console.log("Generated logo.svg");
 }
 
-//Initializes the app
-generateLogo();
+createLogo();
