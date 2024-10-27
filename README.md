@@ -12,7 +12,7 @@ A Node.js application that generates custom SVG logos based on user inputs. User
 
 1. **Clone the repository** to your local machine:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:rennancruz/logo-maker.git
    ```
 1. **Navigate to the project folder:**
 
