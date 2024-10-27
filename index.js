@@ -1,6 +1,14 @@
 const fs = require("fs");
+const crypto = require("crypto");
 const inquirer = require("inquirer");
-const { CircleShape, TriangleShape, SquareShape } = require("./shapes");
+const { CircleShape, TriangleShape, SquareShape } = require("./lib/shapes");
+
+const outputFolder = "generated-logos";
+
+// Ensure the output directory exists
+if (!fs.existsSync(outputFolder)) {
+  fs.mkdirSync(outputFolder);
+}
 
 async function promptUser() {
   return await inquirer.prompt([
@@ -44,8 +52,12 @@ async function createLogo() {
     </svg>
   `;
 
-  fs.writeFileSync("logo.svg", svgContent);
-  console.log("Generated logo.svg");
+  // Generate unique ID for filename
+  const uniqueId = crypto.randomUUID();
+  const filePath = `${outputFolder}/logo-${uniqueId}.svg`;
+
+  fs.writeFileSync(filePath, svgContent);
+  console.log(`Generated logo at ${filePath}`);
 }
 
 createLogo();
